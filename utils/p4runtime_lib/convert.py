@@ -44,6 +44,16 @@ def encodeIPv4(ip_addr_string):
 def decodeIPv4(encoded_ip_addr):
     return socket.inet_ntoa(encoded_ip_addr)
 
+ipv6_pattern = re.compile('^([\da-fA-F]{1,4}:){7}([\da-fA-F]{1,4})$')
+def matchesIPv6(ipv6_addr_string):
+    return ipv6_pattern.match(ipv6_addr_string) is not None
+
+def encodeIPv6(ipv6_addr_string):
+    return ipv6_addr_string.replace(':', '').decode('hex')
+
+def decodeIPv6(encoded_ipv6_addr):
+    return ':'.join(s.encode('hex') for s in encoded_ipv6_addr)
+
 def bitwidthToBytes(bitwidth):
     return int(math.ceil(bitwidth / 8.0))
 
@@ -68,6 +78,8 @@ def encode(x, bitwidth):
             encoded_bytes = encodeMac(x)
         elif matchesIPv4(x):
             encoded_bytes = encodeIPv4(x)
+        elif matchesIPv6(x):
+            encoded_bytes = encodeIPv6(x)
         else:
             # Assume that the string is already encoded
             encoded_bytes = x
